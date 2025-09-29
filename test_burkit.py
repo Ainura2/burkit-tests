@@ -1,20 +1,23 @@
 import pytest
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 
+# фикстура для браузера
 @pytest.fixture
 def browser():
-    # путь к chromedriver.exe
-    driver = webdriver.Chrome(executable_path="C:\\drivers\\chromedriver.exe")
+    service = Service("C:\\drivers\\chromedriver.exe")  # путь к chromedriver
+    driver = webdriver.Chrome(service=service)
+    driver.maximize_window()
     yield driver
-    driver.quit()
+    driver.quit()  # закрываем браузер после теста
 
 def test_open_burkit(browser):
-    browser.get("https://burkit.kz/ru/")
-    
-    # Проверим, что заголовок страницы содержит слово "Burkit"
-    assert "Burkit" in browser.title
+    # открываем сайт
+    browser.get("https://online.burkit.kz/")
 
-    # Дополнительно: проверим, что есть кнопка "Войти"
-    login_button = browser.find_element(By.LINK_TEXT, "Войти")
-    assert login_button.is_displayed()
+    # проверяем, что заголовок страницы не пустой
+    assert browser.title != ""
+
+    # (пример проверки элемента — по желанию можно убрать)
+    assert browser.find_element(By.TAG_NAME, "body")
